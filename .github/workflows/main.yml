@@ -1,0 +1,44 @@
+name: Tests et couverture CoinBox
+
+# S'exécute à chaque commit poussé, peu importe la branche
+on:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer le code du dépôt
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 2. Installer les dépendances
+      - name: Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest coverage
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # 3. Exécuter tous les tests en mesurant la couverture
+      - name: Exécuter les tests
+        run: coverage run -m pytest
+
+      # 4. Générer le rapport de couverture en HTML (dossier htmlcov/)
+      - name: Générer le rapport de couverture HTML
+        if: always()
+        run: coverage html
+
+      # 5. Sauvegarder le dossier généré comme artefact
+      - name: Sauvegarder le rapport comme artefact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-couverture
+          path: htmlcov/
