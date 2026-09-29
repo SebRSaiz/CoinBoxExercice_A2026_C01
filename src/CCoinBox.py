@@ -43,3 +43,8 @@ class CCoinBox:
 
     def get_vente_permise(self):
         return self.vente_permise
+
+    def test_une_piece_ne_permet_pas_la_vente(self):
+        coinBox = CCoinBox()
+        coinBox.ajouter_25c()
+        self.assertEqual(coinBox.get_vente_permise(), False)
